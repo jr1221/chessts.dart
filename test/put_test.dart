@@ -6,7 +6,7 @@ void main() {
     final Chess chess = Chess();
     chess.clear();
 
-    final Piece piece = Piece(Color.BLACK, Chess.ROOK);
+    final Piece piece = Piece(Color.black, Chess.rook);
     expect(chess.put(piece, Square.a1), true);
     expect(chess.get(Square.a1), piece);
   });
@@ -23,7 +23,7 @@ void main() {
   test('put - disallow two white kings', () {
     final Chess chess = Chess();
     chess.clear();
-    final Piece piece = Piece(Color.WHITE, Chess.KING);
+    final Piece piece = Piece(Color.white, Chess.king);
     expect(chess.put(piece, Square.a2), true);
     expect(chess.put(piece, Square.a3), false);
   });
@@ -31,7 +31,7 @@ void main() {
   test('put - disallow two black kings', () {
     final Chess chess = Chess();
     chess.clear();
-    final Piece piece = Piece(Color.BLACK, Chess.KING);
+    final Piece piece = Piece(Color.black, Chess.king);
     expect(chess.put(piece, Square.e8), true);
     expect(chess.put(piece, Square.d8), false);
   });
@@ -39,7 +39,7 @@ void main() {
   test('put - allow two kings if overwriting the same square', () {
     final Chess chess = Chess();
     chess.clear();
-    final Piece piece = Piece(Color.WHITE, Chess.KING);
+    final Piece piece = Piece(Color.white, Chess.king);
     expect(chess.put(piece, Square.a2), true);
     expect(chess.put(piece, Square.a2), true);
   });

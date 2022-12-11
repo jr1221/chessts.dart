@@ -4,7 +4,7 @@ import 'package:chessts/chessts.dart';
 void main() {
   test('remove - returns piece', () {
     final Chess chess = Chess();
-    expect(chess.remove(Square.d1), Piece(Color.WHITE, Chess.QUEEN));
+    expect(chess.remove(Square.d1), Piece(Color.white, Chess.queen));
     expect(chess.get(Square.d1), isNull);
   });
 

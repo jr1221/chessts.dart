@@ -17,9 +17,9 @@ Things to do before beta release (0.1):
  - [ ] Finish and test `loadPgn()`
  - [ ] Add a simple user and simple ai game
  - [ ] Wait for Dart 3.0 stable, then format the code
- - [ ] Clean the code of artifacts and other issues
  - [ ] Add benchmarking capabilities
  - [ ] Inline document all public methods
+ - [ ] Reduce type specification verbosity
 
 ### Versioning
 0.0.x is alpha state, testing only!

@@ -18,7 +18,7 @@ void main() {
   }
 
   final List<String> notCheckmates = <String>[
-    Chess.DEFAULT_POSITION,
+    Chess.defaultPosition,
     '1R6/8/8/8/8/8/7R/k6K b - - 0 1', // stalemate,
   ];
 

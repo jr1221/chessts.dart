@@ -4,7 +4,7 @@ import 'package:chessts/chessts.dart';
 void main() {
   final List<({String fen, String moves})> positions = [
   (
-      fen: Chess.DEFAULT_POSITION,
+      fen: Chess.defaultPosition,
       moves: 'a3 a4 b3 b4 c3 c4 d3 d4 e3 e4 f3 f4 g3 g4 h3 h4 Na3 Nc3 Nf3 Nh3',
   ),
 

@@ -6,6 +6,6 @@ void main() {
     final Chess chess = Chess();
     chess.clear();
     chess.reset();
-    expect(chess.fen(), Chess.DEFAULT_POSITION);
+    expect(chess.fen(), Chess.defaultPosition);
   });
 }

@@ -4,7 +4,7 @@ import 'package:chessts/chessts.dart';
 void main() {
   test('load - default position', () {
     final Chess chess = Chess();
-    expect(chess.fen(), Chess.DEFAULT_POSITION);
+    expect(chess.fen(), Chess.defaultPosition);
   });
 
   // see fen_test.dart for more testcases involving .load()

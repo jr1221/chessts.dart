@@ -1,33 +1,33 @@
 class Chess {
-  static const Color WHITE = Color.WHITE;
-  static const Color BLACK = Color.BLACK;
+  static const Color white = Color.white;
+  static const Color black = Color.black;
 
-  static const PieceSymbol PAWN = PieceSymbol.pawn;
-  static const PieceSymbol KNIGHT = PieceSymbol.knight;
-  static const PieceSymbol BISHOP = PieceSymbol.bishop;
-  static const PieceSymbol ROOK = PieceSymbol.rook;
-  static const PieceSymbol QUEEN = PieceSymbol.queen;
-  static const PieceSymbol KING = PieceSymbol.king;
+  static const PieceSymbol pawn = PieceSymbol.pawn;
+  static const PieceSymbol knight = PieceSymbol.knight;
+  static const PieceSymbol bishop = PieceSymbol.bishop;
+  static const PieceSymbol rook = PieceSymbol.rook;
+  static const PieceSymbol queen = PieceSymbol.queen;
+  static const PieceSymbol king = PieceSymbol.king;
 
-  static const String DEFAULT_POSITION =
+  static const String defaultPosition =
       'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
-  static const int _EMPTY = -1;
+  static const int _empty = -1;
 
-  static const Map<Color, List<int>> _PAWN_OFFSETS = <Color, List<int>>{
-    BLACK: <int>[16, 32, 17, 15],
-    WHITE: <int>[-16, -32, -17, -15]
+  static const Map<Color, List<int>> _pawnOffsets = <Color, List<int>>{
+    black: <int>[16, 32, 17, 15],
+    white: <int>[-16, -32, -17, -15]
   };
 
-  static const Map<PieceSymbol, List<int>> _PIECE_OFFSETS = <PieceSymbol, List<int>>{
-    KNIGHT: <int>[-18, -33, -31, -14, 18, 33, 31, 14],
-    BISHOP: <int>[-17, -15, 17, 15],
-    ROOK: <int>[-16, 1, 16, -1],
-    QUEEN: <int>[-17, -16, -15, 1, 17, 16, 15, -1],
-    KING: <int>[-17, -16, -15, 1, 17, 16, 15, -1]
+  static const Map<PieceSymbol, List<int>> _pieceOffsets = <PieceSymbol, List<int>>{
+    knight: <int>[-18, -33, -31, -14, 18, 33, 31, 14],
+    bishop: <int>[-17, -15, 17, 15],
+    rook: <int>[-16, 1, 16, -1],
+    queen: <int>[-17, -16, -15, 1, 17, 16, 15, -1],
+    king: <int>[-17, -16, -15, 1, 17, 16, 15, -1]
   };
 
-  static const List<int> _ATTACKS = <int>[
+  static const List<int> _attacks = <int>[
     20, 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 0, 20, 0,
     0, 20, 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 20, 0, 0,
     0, 0, 20, 0, 0, 0, 0, 24, 0, 0, 0, 0, 20, 0, 0, 0,
@@ -45,7 +45,7 @@ class Chess {
     20, 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 0, 20
   ];
 
-  static const List<int> _RAYS = <int>[
+  static const List<int> _rays = <int>[
     17, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 15, 0,
     0, 17, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 15, 0, 0,
     0, 0, 17, 0, 0, 0, 0, 16, 0, 0, 0, 0, 15, 0, 0, 0,
@@ -64,45 +64,45 @@ class Chess {
   ];
 
 
-  static const String _SYMBOLS = 'pnbrqkPNBRQK';
+  static const String _symbols = 'pnbrqkPNBRQK';
 
-  static const List<PieceSymbol> _PROMOTIONS = <PieceSymbol>[
-    KNIGHT,
-    BISHOP,
-    ROOK,
-    QUEEN
+  static const List<PieceSymbol> _promotions = <PieceSymbol>[
+    knight,
+    bishop,
+    rook,
+    queen
   ];
 
-  static const int _RANK_1 = 7;
-  static const int _RANK_2 = 6;
+  static const int _rank1 = 7;
+  static const int _rank2 = 6;
 
   // static const  int _RANK_3 = 5;
   // static const  int _RANK_4 = 4;
   // static const  int _RANK_5 = 3;
   // static const int _RANK_6 = 2;
-  static const int _RANK_7 = 1;
-  static const int _RANK_8 = 0;
+  static const int _rank7 = 1;
+  static const int _rank8 = 0;
 
   static final Map
 
-  <Color,List<({int Ox88, int bit})>>
-  _ROOKS
+  <Color,List<({int ox88, int bit})>>
+  _rooks
 
-  =  <Color,List<({int Ox88, int bit})>>{
-  WHITE: <({int Ox88, int bit})>[(Ox88: Square.a1.Ox88, bit: MOVETYPES.QSIDE_CASTLE.bit),
-  (Ox88: Square.h1.Ox88, bit: MOVETYPES.KSIDE_CASTLE.bit)
+  =  <Color,List<({int ox88, int bit})>>{
+  white: <({int ox88, int bit})>[(ox88: Square.a1.ox88, bit: MoveTypes.qsideCastle.bit),
+  (ox88: Square.h1.ox88, bit: MoveTypes.ksideCastle.bit)
   ],
-  BLACK: <({int Ox88, int bit})>[(Ox88: Square.a8.Ox88, bit: MOVETYPES.QSIDE_CASTLE.bit),
-  (Ox88: Square.h8.Ox88, bit: MOVETYPES.KSIDE_CASTLE.bit)
+  black: <({int ox88, int bit})>[(ox88: Square.a8.ox88, bit: MoveTypes.qsideCastle.bit),
+  (ox88: Square.h8.ox88, bit: MoveTypes.ksideCastle.bit)
   ],
   };
 
-  static const Map<Color, int> _SECOND_RANK = <Color, int>{
-    BLACK: _RANK_7,
-    WHITE: _RANK_2
+  static const Map<Color, int> _secondRank = <Color, int>{
+    black: _rank7,
+    white: _rank2
   };
 
-  static const List<String> _TERMINATION_MARKERS = <String>[
+  static const List<String> _terminationMarkers = <String>[
     '1-0', '0-1', '1/2-1/2', '*'
   ];
 
@@ -129,7 +129,7 @@ class Chess {
   }
 
   static Color _swapColor(Color color) {
-    return color == WHITE ? BLACK : WHITE;
+    return color == white ? black : white;
   }
 
   static
@@ -211,8 +211,8 @@ class Chess {
   return (ok: false, error: 'Invalid FEN: illegal en-passant square');
   }
   final List<({Color color, RegExp regex})> kings = <({Color color, RegExp regex})>[
-  ( color: WHITE, regex: RegExp(r'K')),
-  (color: BLACK, regex: RegExp(r'k') ),
+  ( color: white, regex: RegExp(r'K')),
+  (color: black, regex: RegExp(r'k') ),
   ];
 
   for (({Color color, RegExp regex}) king in kings) {
@@ -287,13 +287,13 @@ class Chess {
   required PieceSymbol piece,
   PieceSymbol? captured,
   int? flags}) {
-  flags ??= MOVETYPES.NORMAL.bit;
+  flags ??= MoveTypes.normal.bit;
 
   final int r = _rank(to);
 
-  if (piece == PAWN && (r == _RANK_1 || r == _RANK_8)) {
-  for (int i = 0; i < _PROMOTIONS.length; i++) {
-  final PieceSymbol promotion = _PROMOTIONS[i];
+  if (piece == pawn && (r == _rank1 || r == _rank8)) {
+  for (int i = 0; i < _promotions.length; i++) {
+  final PieceSymbol promotion = _promotions[i];
   moves.add(InternalMove(
   color,
   from,
@@ -301,7 +301,7 @@ class Chess {
   piece,
   captured,
   promotion,
-  flags | MOVETYPES.PROMOTION.bit
+  flags | MoveTypes.promotion.bit
   ));
   }
   } else {
@@ -323,11 +323,11 @@ class Chess {
   if (matches) {
   return null;
   }
-  return PAWN;
+  return pawn;
   }
   pieceType = pieceType.toLowerCase();
   if (pieceType == 'o') {
-  return KING;
+  return king;
   }
 
   for (final PieceSymbol pieceOpt in PieceSymbol.values) {
@@ -344,9 +344,9 @@ class Chess {
   }
 
   List<Piece?> _board = <Piece?>[]..length = 128;
-  Color _turn = WHITE;
+  Color _turn = white;
   Map<String, String> _header = <String, String>{};
-  ColorMap<int> _kings = ColorMap<int>(_EMPTY);
+  ColorMap<int> _kings = ColorMap<int>(_empty);
   int _epSquare = -1;
   int _halfMoves = 0;
   int _moveNumber = 0;
@@ -354,16 +354,16 @@ class Chess {
   Map<String, String> _comments = <String, String>{};
   ColorMap<int> _castling = ColorMap<int>(0);
 
-  Chess({final String fen = DEFAULT_POSITION}) {
+  Chess({final String fen = defaultPosition}) {
   load(fen: fen);
   }
 
   void clear({final bool keepHeaders = false}) {
   _board = <Piece?>[]..length = 128;
-  _turn = WHITE;
+  _turn = white;
   _header = keepHeaders ? _header: <String, String>{};
-  _kings = ColorMap<int>(_EMPTY);
-  _epSquare = _EMPTY;
+  _kings = ColorMap<int>(_empty);
+  _epSquare = _empty;
   _halfMoves = 0;
   _moveNumber = 1;
   _history = <History>[];
@@ -404,7 +404,7 @@ class Chess {
   } else if (_isDigit(piece)) {
   square += int.parse(piece);
   } else {
-  final Color color = (piece.compareTo('a') < 0) ? WHITE : BLACK;
+  final Color color = (piece.compareTo('a') < 0) ? white : black;
   put(Piece(color, PieceSymbol.fromLetter(piece)!), _algebraic(square));
   square++;
   }
@@ -413,19 +413,19 @@ class Chess {
   _turn = Color.fromLetter(tokens[1])!;
 
   if (tokens[2].contains('K')) {
-  _castling[WHITE] |= MOVETYPES.KSIDE_CASTLE.bit;
+  _castling[white] |= MoveTypes.ksideCastle.bit;
   }
   if (tokens[2].contains('Q')) {
-  _castling[WHITE] |= MOVETYPES.QSIDE_CASTLE.bit;
+  _castling[white] |= MoveTypes.qsideCastle.bit;
   }
   if (tokens[2].contains('k')) {
-  _castling[BLACK] |= MOVETYPES.KSIDE_CASTLE.bit;
+  _castling[black] |= MoveTypes.ksideCastle.bit;
   }
   if (tokens[2].contains('q')) {
-  _castling[BLACK] |= MOVETYPES.QSIDE_CASTLE.bit;
+  _castling[black] |= MoveTypes.qsideCastle.bit;
   }
 
-  _epSquare = tokens[3] == '-' ? _EMPTY : (Square.values.byName(tokens[3])).Ox88;
+  _epSquare = tokens[3] == '-' ? _empty : (Square.values.byName(tokens[3])).ox88;
   _halfMoves = int.parse((tokens[4]));
   _moveNumber = int.parse((tokens[5]));
 
@@ -436,7 +436,7 @@ class Chess {
   int empty = 0;
   String fen = '';
 
-  for (int i = Square.a8.Ox88; i <= Square.h1.Ox88; i++) {
+  for (int i = Square.a8.ox88; i <= Square.h1.ox88; i++) {
   if (_board[i] != null) {
   if (empty > 0) {
   fen += empty.toString();
@@ -444,7 +444,7 @@ class Chess {
   }
   final Piece spot = _board[i]!;
 
-  fen += spot.color == WHITE ? spot.type.letter.toUpperCase() : spot.type.letter.toLowerCase();
+  fen += spot.color == white ? spot.type.letter.toUpperCase() : spot.type.letter.toLowerCase();
   } else {
   empty++;
   }
@@ -454,7 +454,7 @@ class Chess {
   fen += empty.toString();
   }
 
-  if (i != Square.h1.Ox88) {
+  if (i != Square.h1.ox88) {
   fen += '/';
   }
 
@@ -464,16 +464,16 @@ class Chess {
   }
 
   String cflags = '';
-  if ((_castling[WHITE] & MOVETYPES.KSIDE_CASTLE.bit) != 0) {
+  if ((_castling[white] & MoveTypes.ksideCastle.bit) != 0) {
   cflags += 'K';
   }
-  if ((_castling[WHITE] & MOVETYPES.QSIDE_CASTLE.bit) != 0){
+  if ((_castling[white] & MoveTypes.qsideCastle.bit) != 0){
   cflags += 'Q';
   }
-  if ((_castling[BLACK] & MOVETYPES.KSIDE_CASTLE.bit) != 0){
+  if ((_castling[black] & MoveTypes.ksideCastle.bit) != 0){
   cflags += 'k';
   }
-  if ((_castling[BLACK] & MOVETYPES.QSIDE_CASTLE.bit) != 0){
+  if ((_castling[black] & MoveTypes.qsideCastle.bit) != 0){
   cflags += 'q';
   }
 
@@ -482,7 +482,7 @@ class Chess {
   cflags = '-';
   }
 
-  final String epflags = (_epSquare == _EMPTY) ? '-' : _algebraic(_epSquare).name;
+  final String epflags = (_epSquare == _empty) ? '-' : _algebraic(_epSquare).name;
 
   return <Object>[
   fen,
@@ -502,7 +502,7 @@ class Chess {
   void _updateSetup(String fen) {
   if (_history.isNotEmpty) return;
 
-  if (fen != DEFAULT_POSITION) {
+  if (fen != defaultPosition) {
   _header['SetUp'] = '1';
   _header['FEN'] = fen;
   } else {
@@ -512,16 +512,16 @@ class Chess {
   }
 
   void reset() {
-  load(fen: DEFAULT_POSITION);
+  load(fen: defaultPosition);
   }
 
   Piece? get(Square square) {
-  return _board[square.Ox88];
+  return _board[square.ox88];
   }
 
   bool put(Piece piece, Square square) {
   /* check for piece */
-  if (!_SYMBOLS.contains(piece.type.letter.toLowerCase())) {
+  if (!_symbols.contains(piece.type.letter.toLowerCase())) {
   return false;
   }
 
@@ -531,19 +531,19 @@ class Chess {
   return false;
   } */ // Assume obsolete bc square object
 
-  final int sq = square.Ox88;
+  final int sq = square.ox88;
 
   /* don't let the user place more than one king */
   if (
-  piece.type == KING &&
-  !(_kings[piece.color] == _EMPTY || _kings[piece.color] == sq)
+  piece.type == king &&
+  !(_kings[piece.color] == _empty || _kings[piece.color] == sq)
   ) {
   return false;
   }
 
   _board[sq] = piece;
 
-  if (piece.type == KING) {
+  if (piece.type == king) {
   _kings[piece.color] = sq;
   }
 
@@ -554,9 +554,9 @@ class Chess {
 
   Piece? remove(Square square) {
   final Piece? piece = get(square);
-  _board[square.Ox88] = null;
-  if (piece != null && piece.type == KING) {
-  _kings[piece.color] = _EMPTY;
+  _board[square.ox88] = null;
+  if (piece != null && piece.type == king) {
+  _kings[piece.color] = _empty;
   }
 
   _updateSetup(fen());
@@ -565,7 +565,7 @@ class Chess {
   }
 
   bool _attacked(Color color, int square) {
-  for (int i = Square.a8.Ox88; i <= Square.h1.Ox88; i++) {
+  for (int i = Square.a8.ox88; i <= Square.h1.ox88; i++) {
   /* did we run off the end of the board */
   if ((i & 0x88) != 0) {
   i += 7;
@@ -582,20 +582,20 @@ class Chess {
   final int index = difference + 119;
 
   // TODO check nullability of _PIECE_MASKS, chess.dart uses a type shift
-  if ((_ATTACKS[index] & piece.type.mask) != 0) {
-  if (piece.type == PAWN) {
+  if ((_attacks[index] & piece.type.mask) != 0) {
+  if (piece.type == pawn) {
   if (difference > 0) {
-  if (piece.color == WHITE) return true;
+  if (piece.color == white) return true;
   } else {
-  if (piece.color == BLACK) return true;
+  if (piece.color == black) return true;
   }
   continue;
   }
 
   /* if the piece is a knight or a king */
-  if (piece.type == KNIGHT || piece.type == KING) return true;
+  if (piece.type == knight || piece.type == king) return true;
 
-  final int offset = _RAYS[index];
+  final int offset = _rays[index];
   int j = i + offset;
 
   bool blocked = false;
@@ -641,19 +641,19 @@ class Chess {
   // k.b. vs k.n. with mate in 1:
   // 8/8/8/8/1n6/8/B7/K1k5 b - - 2 1
   final Map<PieceSymbol, int> pieces = <PieceSymbol, int>{
-  BISHOP: 0,
-  KNIGHT: 0,
-  ROOK: 0,
-  QUEEN: 0,
-  KING: 0,
-  PAWN: 0,
+  bishop: 0,
+  knight: 0,
+  rook: 0,
+  queen: 0,
+  king: 0,
+  pawn: 0,
   };
 
   final List<int> bishops = <int>[];
   int numPieces = 0;
   int squareColor = 0;
 
-  for (int i = Square.a8.Ox88; i <= Square.h1.Ox88; i++) {
+  for (int i = Square.a8.ox88; i <= Square.h1.ox88; i++) {
   squareColor = (squareColor + 1) % 2;
   if ((i & 0x88) != 0) {
   i += 7;
@@ -664,7 +664,7 @@ class Chess {
   if (piece != null) {
   pieces[piece.type] =
   (pieces.containsKey(piece.type)) ? pieces[piece.type]! + 1 : 1;
-  if (piece.type == BISHOP) {
+  if (piece.type == bishop) {
   bishops.add(squareColor);
   }
   numPieces++;
@@ -677,10 +677,10 @@ class Chess {
   } else if (
   // k vs. kn .... or .... k vs. kb
   numPieces == 3 &&
-  (pieces[BISHOP] == 1 || pieces[KNIGHT] == 1)
+  (pieces[bishop] == 1 || pieces[knight] == 1)
   ) {
   return true;
-  } else if (numPieces == pieces[BISHOP]! + 2) {
+  } else if (numPieces == pieces[bishop]! + 2) {
   // kb vs. kb where any number of bishops are all on the same color
   int sum = 0;
   final int len = bishops.length;
@@ -759,13 +759,13 @@ class Chess {
   final Color us = _turn;
   final Color them = _swapColor(us);
 
-  int firstSquare = Square.a8.Ox88;
-  int lastSquare = Square.h1.Ox88;
+  int firstSquare = Square.a8.ox88;
+  int lastSquare = Square.h1.ox88;
   bool singleSquare = false;
 
   /* are we generating moves for a single square? */
   if (square != null) {
-  firstSquare = lastSquare = square.Ox88;
+  firstSquare = lastSquare = square.ox88;
   singleSquare = true;
   }
 
@@ -783,24 +783,24 @@ class Chess {
   final PieceSymbol type = _board[from]!.type;
 
   int to = 0;
-  if (type == PAWN) {
+  if (type == pawn) {
   if (piece != null && piece != type) continue;
 
   /* single square, non-capturing */
-  to = from + _PAWN_OFFSETS[us]![0];
+  to = from + _pawnOffsets[us]![0];
   if (_board[to] == null) {
-  _addMove(moves: moves, color: us, from: from, to: to, piece: PAWN);
+  _addMove(moves: moves, color: us, from: from, to: to, piece: pawn);
 
   /* double square */
-  to = from + _PAWN_OFFSETS[us]![1];
-  if (_SECOND_RANK[us] == _rank(from) && _board[to] == null) {
-  _addMove(moves: moves, color: us, from: from, to: to, piece: PAWN, flags: MOVETYPES.BIG_PAWN.bit);
+  to = from + _pawnOffsets[us]![1];
+  if (_secondRank[us] == _rank(from) && _board[to] == null) {
+  _addMove(moves: moves, color: us, from: from, to: to, piece: pawn, flags: MoveTypes.bigPawn.bit);
   }
   }
 
   /* pawn captures */
   for (int j = 2; j < 4; j++) {
-  to = from + _PAWN_OFFSETS[us]![j];
+  to = from + _pawnOffsets[us]![j];
   if ((to & 0x88) != 0) continue;
 
   if (_board[to]?.color == them) {
@@ -809,19 +809,19 @@ class Chess {
   color: us,
   from: from,
   to: to,
-  piece: PAWN,
+  piece: pawn,
   captured: _board[to]!.type,
-  flags: MOVETYPES.CAPTURE.bit
+  flags: MoveTypes.capture.bit
   );
   } else if (to == _epSquare) {
-  _addMove(moves: moves, color: us, from: from, to: to, piece: PAWN, captured: PAWN, flags: MOVETYPES.EP_CAPTURE.bit);
+  _addMove(moves: moves, color: us, from: from, to: to, piece: pawn, captured: pawn, flags: MoveTypes.epCapture.bit);
   }
   }
   } else {
   if (piece != null && piece != type) continue;
 
-  for (int j = 0, len = _PIECE_OFFSETS[type]!.length; j < len; j++) {
-  final int offset = _PIECE_OFFSETS[type]![j];
+  for (int j = 0, len = _pieceOffsets[type]!.length; j < len; j++) {
+  final int offset = _pieceOffsets[type]![j];
   to = from;
 
   while (true) {
@@ -841,13 +841,13 @@ class Chess {
   to: to,
   piece: type,
   captured: _board[to]?.type,
-  flags: MOVETYPES.CAPTURE.bit
+  flags: MoveTypes.capture.bit
   );
   break;
   }
 
   /* break, if knight or king */
-  if (type == KNIGHT || type == KING) break;
+  if (type == knight || type == king) break;
   }
   }
   }
@@ -857,10 +857,10 @@ class Chess {
      * a) we're generating all moves, or
      * b) we're doing single square move generation on the king's square
      */
-  if (piece == null || piece == KING) {
+  if (piece == null || piece == king) {
   if (!singleSquare || lastSquare == _kings[us]) {
   /* king-side castling */
-  if ((_castling[us] & MOVETYPES.KSIDE_CASTLE.bit) != 0) {
+  if ((_castling[us] & MoveTypes.ksideCastle.bit) != 0) {
   final int castlingFrom = _kings[us];
   final int castlingTo = castlingFrom + 2;
 
@@ -876,13 +876,13 @@ class Chess {
   color: us,
   from: _kings[us],
   to: castlingTo,
-  piece: KING,
-  flags: MOVETYPES.KSIDE_CASTLE.bit
+  piece: king,
+  flags: MoveTypes.ksideCastle.bit
   );
   }
   }
   /* queen-side castling */
-  if ((_castling[us] & MOVETYPES.QSIDE_CASTLE.bit) != 0){
+  if ((_castling[us] & MoveTypes.qsideCastle.bit) != 0){
   final int castlingFrom = _kings[us];
   final int castlingTo = castlingFrom - 2;
 
@@ -899,8 +899,8 @@ class Chess {
   color: us,
   from: _kings[us],
   to: castlingTo,
-  piece: KING,
-  flags: MOVETYPES.QSIDE_CASTLE.bit
+  piece: king,
+  flags: MoveTypes.qsideCastle.bit
   );
   }
   }
@@ -998,8 +998,8 @@ class Chess {
   _board[move.from] = null;
 
   /* if ep capture, remove the captured pawn */
-  if ((move.flags & MOVETYPES.EP_CAPTURE.bit) != 0) {
-  if (_turn == BLACK) {
+  if ((move.flags & MoveTypes.epCapture.bit) != 0) {
+  if (_turn == black) {
   _board[move.to - 16] = null;
   } else {
   _board[move.to + 16] = null;
@@ -1012,16 +1012,16 @@ class Chess {
   }
 
   /* if we moved the king */
-  if (_board[move.to]?.type == KING) {
+  if (_board[move.to]?.type == king) {
   _kings[us] = move.to;
 
   /* if we castled, move the rook next to the king */
-  if ((move.flags & MOVETYPES.KSIDE_CASTLE.bit) != 0) {
+  if ((move.flags & MoveTypes.ksideCastle.bit) != 0) {
   final int castlingTo = move.to - 1;
   final int castlingFrom = move.to + 1;
   _board[castlingTo] = _board[castlingFrom];
   _board[castlingFrom] = null;
-  } else if ((move.flags & MOVETYPES.QSIDE_CASTLE.bit) != 0) {
+  } else if ((move.flags & MoveTypes.qsideCastle.bit) != 0) {
   final int castlingTo = move.to + 1;
   final int castlingFrom = move.to - 2;
   _board[castlingTo] = _board[castlingFrom];
@@ -1034,12 +1034,12 @@ class Chess {
 
   /* turn off castling if we move a rook */
   if (_castling[us] != 0) {
-  for (int i = 0, len = _ROOKS[us]!.length; i < len; i++) {
+  for (int i = 0, len = _rooks[us]!.length; i < len; i++) {
   if (
-  move.from == _ROOKS[us]![i].Ox88 &&
-  ((_castling[us] & _ROOKS[us]![i].bit) != 0)
+  move.from == _rooks[us]![i].ox88 &&
+  ((_castling[us] & _rooks[us]![i].bit) != 0)
   ) {
-  _castling[us] ^= _ROOKS[us]![i].bit;
+  _castling[us] ^= _rooks[us]![i].bit;
   break;
   }
   }
@@ -1047,38 +1047,38 @@ class Chess {
 
   /* turn off castling if we capture a rook */
   if (_castling[them] != 0) {
-  for (int i = 0, len = _ROOKS[them]!.length; i < len; i++) {
+  for (int i = 0, len = _rooks[them]!.length; i < len; i++) {
   if (
-  move.to == _ROOKS[them]![i].Ox88 &&
-  ((_castling[them] & _ROOKS[them]![i].bit) != 0)
+  move.to == _rooks[them]![i].ox88 &&
+  ((_castling[them] & _rooks[them]![i].bit) != 0)
   ) {
-  _castling[them] ^= _ROOKS[them]![i].bit;
+  _castling[them] ^= _rooks[them]![i].bit;
   break;
   }
   }
   }
 
   /* if big pawn move, update the en passant square */
-  if ((move.flags & MOVETYPES.BIG_PAWN.bit) != 0) {
-  if (us == BLACK) {
+  if ((move.flags & MoveTypes.bigPawn.bit) != 0) {
+  if (us == black) {
   _epSquare = move.to - 16;
   } else {
   _epSquare = move.to + 16;
   }
   } else {
-  _epSquare = _EMPTY;
+  _epSquare = _empty;
   }
 
   /* reset the 50 move counter if a pawn is moved or a piece is captured */
-  if (move.piece == PAWN) {
+  if (move.piece == pawn) {
   _halfMoves = 0;
-  } else if ((move.flags & (MOVETYPES.CAPTURE.bit | MOVETYPES.EP_CAPTURE.bit)) != 0) {
+  } else if ((move.flags & (MoveTypes.capture.bit | MoveTypes.epCapture.bit)) != 0) {
   _halfMoves = 0;
   } else {
   _halfMoves++;
   }
 
-  if (us == BLACK) {
+  if (us == black) {
   _moveNumber++;
   }
 
@@ -1115,25 +1115,25 @@ class Chess {
   _board[move.to] = null;
 
   if (move.captured != null) {
-  if ((move.flags & MOVETYPES.EP_CAPTURE.bit) != 0) {
+  if ((move.flags & MoveTypes.epCapture.bit) != 0) {
   // en passant capture
   int index;
-  if (us == BLACK) {
+  if (us == black) {
   index = move.to - 16;
   } else {
   index = move.to + 16;
   }
-  _board[index] = Piece(them, PAWN);
+  _board[index] = Piece(them, pawn);
   } else {
   // regular capture
   _board[move.to] = Piece(them, move.captured!);
   }
   }
 
-  if ((move.flags & (MOVETYPES.KSIDE_CASTLE.bit | MOVETYPES.QSIDE_CASTLE.bit)) != 0) {
+  if ((move.flags & (MoveTypes.ksideCastle.bit | MoveTypes.qsideCastle.bit)) != 0) {
   int castlingTo;
   int castlingFrom;
-  if ((move.flags & MOVETYPES.KSIDE_CASTLE.bit) != 0) {
+  if ((move.flags & MoveTypes.ksideCastle.bit) != 0) {
   castlingTo = move.to + 1;
   castlingFrom = move.to - 1;
   } else {
@@ -1205,11 +1205,11 @@ class Chess {
   } */
 
   /* if the position started with black to move, start PGN with #. ... */
-  if (_history.isEmpty && move.color == Color.BLACK) {
+  if (_history.isEmpty && move.color == Color.black) {
   final String prefix = '$_moveNumber. ...';
   /* is there a comment preceding the first move? */
    moveString = moveString != null ? '$moveString $prefix' : prefix;
-  } else if (move.color == Color.WHITE) {
+  } else if (move.color == Color.white) {
   /* store the previous generated move_string if we have one */
   if (moveString != null && moveString.isNotEmpty) {
   moves.add(moveString);
@@ -1540,18 +1540,18 @@ class Chess {
   String _moveToSan(InternalMove move, List<InternalMove> moves) {
   String output = '';
 
-  if ((move.flags & MOVETYPES.KSIDE_CASTLE.bit) != 0) {
+  if ((move.flags & MoveTypes.ksideCastle.bit) != 0) {
   output = 'O-O';
-  } else if ((move.flags & MOVETYPES.QSIDE_CASTLE.bit) != 0) {
+  } else if ((move.flags & MoveTypes.qsideCastle.bit) != 0) {
   output = 'O-O-O';
   } else {
-  if (move.piece != PAWN) {
+  if (move.piece != pawn) {
   final String disambiguator = _getDisambiguator(move, moves);
   output += move.piece.letter.toUpperCase() + disambiguator;
   }
 
-  if ((move.flags & (MOVETYPES.CAPTURE.bit | MOVETYPES.EP_CAPTURE.bit))  != 0){
-  if (move.piece == PAWN) {
+  if ((move.flags & (MoveTypes.capture.bit | MoveTypes.epCapture.bit))  != 0){
+  if (move.piece == pawn) {
   output += _algebraic(move.from).name[0];
   }
   output += 'x';
@@ -1669,8 +1669,8 @@ class Chess {
   // regex
   if (Square.values.map((Square e) => e.name).contains(from) &&
   (piece == null|| piece.toLowerCase() == moves[i].piece.letter) &&
-  Square.values.byName(from).Ox88 == moves[i].from &&
-  Square.values.byName(from).Ox88== moves[i].to &&
+  Square.values.byName(from).ox88 == moves[i].from &&
+  Square.values.byName(from).ox88== moves[i].to &&
   (promotion == null || promotion.toLowerCase() == moves[i].promotion?.letter)
   ) {
   return moves[i];
@@ -1682,7 +1682,7 @@ class Chess {
   final Square square = _algebraic(moves[i].from);
   if (
   (piece == null || piece.toLowerCase() == moves[i].piece.letter) &&
-  to.Ox88 == moves[i].to &&
+  to.ox88 == moves[i].to &&
   (from == square.name[0] || from == square.name[1]) &&
   (promotion == null || promotion.toLowerCase() == moves[i].promotion?.letter)
   ) {
@@ -1696,7 +1696,7 @@ class Chess {
 
   String ascii() {
   String s = '   +------------------------+\n';
-  for (int i = Square.a8.Ox88; i <= Square.h1.Ox88; i++) {
+  for (int i = Square.a8.ox88; i <= Square.h1.ox88; i++) {
   /* display the rank */
   if (_file(i) == 0) {
   s += ' ${'87654321'[_rank(i)]} |';
@@ -1706,7 +1706,7 @@ class Chess {
   final PieceSymbol piece = _board[i]!.type;
   final Color color = _board[i]!.color;
   final String symbol =
-  color == WHITE ? piece.letter.toUpperCase() : piece.letter.toLowerCase();
+  color == white ? piece.letter.toUpperCase() : piece.letter.toLowerCase();
   s += ' $symbol ';
   } else {
   s += ' . ';
@@ -1745,9 +1745,9 @@ class Chess {
 
   Move _makePretty(InternalMove uglyMove, {bool generateSan = false}) {
 
-  List<MOVETYPES> prettyFlags = <MOVETYPES>[];
+  List<MoveTypes> prettyFlags = <MoveTypes>[];
 
-  for (final MOVETYPES flag in MOVETYPES.values) {
+  for (final MoveTypes flag in MoveTypes.values) {
   if ((flag.bit & uglyMove.flags) != 0) {
   prettyFlags.add(flag);
   }
@@ -1787,7 +1787,7 @@ class Chess {
   final List<List<({Square square, Piece? piece})>> output = <List<({Square square, Piece? piece})>>[];
   List<({Square square, Piece? piece})> row = <({Square square, Piece? piece})>[];
 
-  for (int i = Square.a8.Ox88; i <= Square.h1.Ox88; i++) {
+  for (int i = Square.a8.ox88; i <= Square.h1.ox88; i++) {
   if (_board[i] == null) {
   row.add((square: _algebraic(i), piece: null));
   } else {
@@ -1805,8 +1805,8 @@ class Chess {
 
   Color? squareColor(Square square) {
   if (Square.values.contains(square)) {
-  final int sq = square.Ox88;
-  return (((_rank(sq) + _file(sq)) % 2) == 0 ? Color.WHITE : Color.BLACK);
+  final int sq = square.ox88;
+  return (((_rank(sq) + _file(sq)) % 2) == 0 ? Color.white : Color.black);
   }
 
   return null;
@@ -1889,8 +1889,8 @@ class Chess {
 
 // PUBLIC -->
 enum Color {
-  WHITE('w'),
-  BLACK('b');
+  white('w'),
+  black('b');
 
   const Color(this.letter);
   final String letter;
@@ -1900,9 +1900,9 @@ enum Color {
 
   static Color? fromLetter(String letter) {
     if (letter == 'w') {
-      return Color.WHITE;
+      return Color.white;
     } else if (letter == 'b') {
-      return Color.BLACK;
+      return Color.black;
     }
     return null;
   }
@@ -1952,7 +1952,7 @@ class Move {
   final PieceSymbol piece;
   final PieceSymbol? captured;
   final PieceSymbol? promotion;
-  final List<MOVETYPES> flags;
+  final List<MoveTypes> flags;
 
   const Move(
       {required this.color, required this.from, required this.to, required this.piece, this.captured, this.promotion, required this.flags});
@@ -1968,8 +1968,8 @@ class Move {
   @override
   bool operator ==(Object other) {
     if (other is Move) {
-      final String otherFlags = other.flags.fold<String>('', (String previousValue, MOVETYPES element) => previousValue += element.flag);
-      final String thisFlags = flags.fold<String>('', (String previousValue, MOVETYPES element) => previousValue += element.flag);
+      final String otherFlags = other.flags.fold<String>('', (String previousValue, MoveTypes element) => previousValue += element.flag);
+      final String thisFlags = flags.fold<String>('', (String previousValue, MoveTypes element) => previousValue += element.flag);
 
       return otherFlags == thisFlags && color == other.color && from == other.from && to == other.to && piece == other.piece && captured == other.captured && promotion == other.promotion;
   } else {
@@ -1993,10 +1993,10 @@ class SanMove extends Move {
   bool operator ==(Object other) {
     if (other is SanMove) {
       final String otherFlags = other.flags.fold<String>(
-          '', (String previousValue, MOVETYPES element) =>
+          '', (String previousValue, MoveTypes element) =>
       previousValue += element.flag);
       final String thisFlags = flags.fold<String>(
-          '', (String previousValue, MOVETYPES element) =>
+          '', (String previousValue, MoveTypes element) =>
       previousValue += element.flag);
 
       return otherFlags == thisFlags && color == other.color &&
@@ -2019,23 +2019,23 @@ enum Square {
   g8(6), g7(22), g6(38), g5(54), g4(70), g3(86), g2(102), g1(118),
   h8(7), h7(23), h6(39), h5(55), h4(71), h3(87), h2(103), h1(119);
 
-  const Square(this.Ox88);
-  final int Ox88;
+  const Square(this.ox88);
+  final int ox88;
 
   @override
   String toString() => name;
 }
 
-enum MOVETYPES {
-  NORMAL('n', 1),
-  CAPTURE('c', 2),
-  BIG_PAWN('b', 4),
-  EP_CAPTURE( 'e', 8),
-  PROMOTION ('p', 16),
-  KSIDE_CASTLE ('k', 32),
-  QSIDE_CASTLE( 'q', 64);
+enum MoveTypes {
+  normal('n', 1),
+  capture('c', 2),
+  bigPawn('b', 4),
+  epCapture( 'e', 8),
+  promotion ('p', 16),
+  ksideCastle ('k', 32),
+  qsideCastle( 'q', 64);
 
-  const MOVETYPES(this.flag, this.bit);
+  const MoveTypes(this.flag, this.bit);
   final String flag;
   final int bit;
 
@@ -2056,11 +2056,11 @@ class ColorMap<T> {
         _black = other._black;
 
   T operator [](Color color) {
-    return (color == Color.WHITE) ? _white : _black;
+    return (color == Color.white) ? _white : _black;
   }
 
   void operator []=(Color color, T value) {
-    if (color == Color.WHITE) {
+    if (color == Color.white) {
       _white = value;
     } else {
       _black = value;

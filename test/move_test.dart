@@ -36,7 +36,7 @@ void main() {
         legal: true,
         move: 'fxe6',
         next: 'rnbqkbnr/pp3ppp/2ppP3/8/4P3/8/PPPP2PP/RNBQKBNR b KQkq - 0 1',
-        captured: Chess.PAWN,
+        captured: Chess.pawn,
         sloppy: false,
 
     ),
@@ -45,7 +45,7 @@ void main() {
         legal: true,
         move: 'fxe3',
         next: 'rnbqkbnr/pppp2pp/8/4p3/8/2PPp3/PP3PPP/RNBQKBNR w KQkq - 0 2',
-        captured: Chess.PAWN,
+        captured: Chess.pawn,
         sloppy: false,
 
     ),
@@ -121,7 +121,7 @@ void main() {
       (
         fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
         legal: true,
-        move: (from: Square.e2, to: Square.e4, promotion: Chess.QUEEN),
+        move: (from: Square.e2, to: Square.e4, promotion: Chess.queen),
         next: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1',
     ),
     (
