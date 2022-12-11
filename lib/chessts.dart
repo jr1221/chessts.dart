@@ -3,4 +3,4 @@
 /// More dartdocs go here.
 library chessts;
 
-export 'src/chessts_dart_base.dart' hide InternalMove, History, Safety, ListAt;
+export 'src/chessts_base.dart' hide InternalMove, History, Safety, ListAt;

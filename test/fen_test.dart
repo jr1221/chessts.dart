@@ -13,7 +13,6 @@ void main() {
     final Chess chess = Chess();
 
     for (final String fen in validPositions) {
-      print(fen);
       expect(() => chess.load(fen: fen), returnsNormally);
       expect(chess.fen(), fen);
     }

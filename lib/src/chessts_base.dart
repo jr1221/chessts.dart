@@ -749,9 +749,9 @@ class Chess {
   return isCheckmate() || isStalemate() || isDraw();
   }
 
-  List<Move> moves({Square? square, bool verbose = false}) {
+  List<Move> moves({Square? square, bool generateSan = false}) {
   final List<InternalMove> moves = _moves(square: square);
-  return moves.map<Move>((InternalMove move) => _makePretty(move, generateSan: verbose)).toList();
+  return moves.map<Move>((InternalMove move) => _makePretty(move, generateSan: generateSan)).toList();
   }
 
   List<InternalMove> _moves({PieceSymbol? piece, Square? square, bool legal = true}) {
@@ -1753,15 +1753,27 @@ class Chess {
   }
   }
 
-  final Move move = Move(
+  final Move move;
+  if (generateSan) {
+  move = SanMove(
   piece: uglyMove.piece,
   color: uglyMove.color,
   from: _algebraic(uglyMove.from),
   to: _algebraic(uglyMove.to),
   captured: uglyMove.captured,
   promotion: uglyMove.promotion,
-  san: generateSan ? _moveToSan(uglyMove, _moves(legal: true)) : null,
+  san: _moveToSan(uglyMove, _moves(legal: true)),
   flags: prettyFlags);
+  } else {
+    move = Move(
+  piece: uglyMove.piece,
+  color: uglyMove.color,
+  from: _algebraic(uglyMove.from),
+  to: _algebraic(uglyMove.to),
+  captured: uglyMove.captured,
+  promotion: uglyMove.promotion,
+  flags: prettyFlags);
+  }
 
   return move;
   }
@@ -1800,7 +1812,7 @@ class Chess {
   return null;
   }
 
-  List<Move> history({bool verbose = false}) {
+  List<Move> history({bool generateSan = false}) {
   final List<InternalMove> reversedHistory = <InternalMove>[];
   final List<Move> moveHistory = <Move>[];
 
@@ -1814,7 +1826,7 @@ class Chess {
   }
   final InternalMove move = reversedHistory.removeLast();
 
-  moveHistory.add(_makePretty(move, generateSan: verbose));
+  moveHistory.add(_makePretty(move, generateSan: generateSan));
   _makeMove(move);
   }
 
@@ -1941,10 +1953,9 @@ class Move {
   final PieceSymbol? captured;
   final PieceSymbol? promotion;
   final List<MOVETYPES> flags;
-  final String? san;
 
   const Move(
-      {required this.color, required this.from, required this.to, required this.piece, this.captured, this.promotion, required this.flags, required this.san});
+      {required this.color, required this.from, required this.to, required this.piece, this.captured, this.promotion, required this.flags});
 
   @override
   String toString() => '$color $piece from $from to $to ${captured != null
@@ -1952,7 +1963,7 @@ class Move {
       : ''} ${promotion != null ? 'promoting to $promotion' : ''}';
   
   @override
-  int get hashCode => color.hashCode^from.hashCode^to.hashCode^piece.hashCode^captured.hashCode^promotion.hashCode^flags.hashCode^san.hashCode;
+  int get hashCode => color.hashCode^from.hashCode^to.hashCode^piece.hashCode^captured.hashCode^promotion.hashCode^flags.hashCode;
 
   @override
   bool operator ==(Object other) {
@@ -1960,12 +1971,41 @@ class Move {
       final String otherFlags = other.flags.fold<String>('', (String previousValue, MOVETYPES element) => previousValue += element.flag);
       final String thisFlags = flags.fold<String>('', (String previousValue, MOVETYPES element) => previousValue += element.flag);
 
-      return otherFlags == thisFlags && color == other.color && from == other.from && to == other.to && piece == other.piece && captured == other.captured && promotion == other.promotion && san == other.san;
+      return otherFlags == thisFlags && color == other.color && from == other.from && to == other.to && piece == other.piece && captured == other.captured && promotion == other.promotion;
   } else {
       return false;
     }
   }
-  
+}
+
+class SanMove extends Move {
+  final String san;
+
+  const SanMove(
+      {required super.color, required super.from, required super.to, required super.piece, super.captured, super.promotion, required super.flags, required this.san});
+
+  @override
+  int get hashCode =>
+      color.hashCode ^ from.hashCode ^ to.hashCode ^ piece.hashCode ^ captured
+          .hashCode ^ promotion.hashCode ^ flags.hashCode ^ san.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is SanMove) {
+      final String otherFlags = other.flags.fold<String>(
+          '', (String previousValue, MOVETYPES element) =>
+      previousValue += element.flag);
+      final String thisFlags = flags.fold<String>(
+          '', (String previousValue, MOVETYPES element) =>
+      previousValue += element.flag);
+
+      return otherFlags == thisFlags && color == other.color &&
+          from == other.from && to == other.to && piece == other.piece &&
+          captured == other.captured && promotion == other.promotion && san == other.san;
+    } else {
+      return false;
+    }
+  }
 }
 
 // includes static const Map<Square, int> _Ox88
