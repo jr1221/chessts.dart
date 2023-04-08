@@ -6,8 +6,6 @@ linter:
     always_declare_return_types: true
 
 analyzer:
-  enable-experiment:
-    - records
   language:
       strict-casts: true
       strict-inference: true
