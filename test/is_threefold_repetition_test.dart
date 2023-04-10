@@ -11,7 +11,7 @@ void main() {
     for (final String move in moves) {
       {
         expect(chess.isThreefoldRepetition(), false);
-        expect(chess.move(san: move), isNotNull);
+        chess.move(san: move);
       }
     }
     expect(chess.isThreefoldRepetition(), true);
@@ -23,7 +23,7 @@ void main() {
     for (String move in moves) {
       {
         expect(chess.isThreefoldRepetition(), false);
-        expect(chess.move(san: move), isNotNull);
+        chess.move(san: move);
       }
     }
     expect(chess.isThreefoldRepetition(), true);

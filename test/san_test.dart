@@ -43,7 +43,7 @@ void main() {
   for (final ({String fen, String moves}) position in positions) {
     test('standard algebraic notation - ${position.fen}', () {
       final Chess chess = Chess(fen: position.fen);
-      expect(chess.moves(generateSan: true).map((e) => (e as SanMove).san),
+      expect(chess.moves().map((e) => e.san),
           containsAll(position.moves.split(' ')));
     });
   }

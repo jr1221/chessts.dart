@@ -830,6 +830,10 @@ class Chess {
     _updateSetup(fen());
   }
 
+  void removeHeader({required String key}) {
+    _header.remove(key);
+  }
+
   void load({required String fen, bool keepHeaders = false}) {
     List<String> tokens = fen.split(RegExp(r'\s+'));
 
@@ -923,33 +927,72 @@ class Chess {
       }
     }
 
-    String cflags = '';
+    String castling = '';
     if ((_castling[white] & MoveTypes.ksideCastle.bit) != 0) {
-      cflags += 'K';
+      castling += 'K';
     }
     if ((_castling[white] & MoveTypes.qsideCastle.bit) != 0) {
-      cflags += 'Q';
+      castling += 'Q';
     }
     if ((_castling[black] & MoveTypes.ksideCastle.bit) != 0) {
-      cflags += 'k';
+      castling += 'k';
     }
     if ((_castling[black] & MoveTypes.qsideCastle.bit) != 0) {
-      cflags += 'q';
+      castling += 'q';
     }
 
     /* do we have an empty castling flag? */
-    if (cflags == '') {
-      cflags = '-';
+    if (castling == '') {
+      castling = '-';
     }
 
-    final String epflags =
-        (_epSquare == _empty) ? '-' : _algebraic(_epSquare).name;
+    String epSquare = '-';
+    /*
+     * only print the ep square if en passant is a valid move (pawn is present
+     * and ep capture is not pinned)
+     */
+    if (_epSquare != _empty) {
+      final int bigPawnSquare = _epSquare + (_turn == Chess.white ? 16 : -16);
+      final List<int> squares = [bigPawnSquare + 1, bigPawnSquare - 1];
+
+      for (final square in squares) {
+        // is the square off the board?
+        if ((square & 0x88) != 0) {
+          continue;
+        }
+
+        final Color color = _turn;
+
+        // is there a pawn that can capture the epSquare?
+        if (_board[square]?.color == color &&
+            _board[square]?.type == PieceSymbol.pawn) {
+          // if the pawn makes an ep capture, does it leave it's king in check?
+          _makeMove(InternalMove(
+            color,
+            square,
+            _epSquare,
+            PieceSymbol.pawn,
+            PieceSymbol.pawn,
+            null,
+            MoveTypes.epCapture.bit,
+          ));
+          final bool isLegal = !_isKingAttacked(color);
+          _undoMove();
+
+          // if ep is legal, break and set the ep square in the FEN output
+          if (isLegal) {
+            epSquare = _algebraic(_epSquare).name;
+            break;
+          }
+        }
+      }
+    }
 
     return <Object>[
       fen,
       _turn.letter,
-      cflags,
-      epflags,
+      castling,
+      epSquare,
       _halfMoves,
       _moveNumber,
     ].join(' ');
@@ -1038,6 +1081,12 @@ class Chess {
       }
 
       final int difference = i - square;
+
+      // skip - to/from square are the same
+      if (difference == 0) {
+        continue;
+      }
+
       final int index = difference + 119;
 
       // TODO check nullability of _PIECE_MASKS, chess.dart uses a type shift
@@ -1074,7 +1123,12 @@ class Chess {
   }
 
   bool _isKingAttacked(Color color) {
-    return _attacked(_swapColor(color), _kings[color]);
+    final int square = _kings[color];
+    return square == -1 ? false : _attacked(_swapColor(color), square);
+  }
+
+  bool isAttacked({required Square square, required Color attackedBy}) {
+    return _attacked(attackedBy, square.ox88);
   }
 
   bool isCheck() {
@@ -1153,7 +1207,7 @@ class Chess {
   }
 
   bool isThreefoldRepetition() {
-    /* TODO: while this function is fine for casual use, a better
+    /* upsource TODO: while this function is fine for casual use, a better
       * implementation would use a Zobrist key (instead of FEN). the
       * Zobrist key would be maintained in the make_move/undo_move
       functions,
@@ -1204,12 +1258,9 @@ class Chess {
     return isCheckmate() || isStalemate() || isDraw();
   }
 
-  List<Move> moves({Square? square, bool generateSan = false}) {
-    final List<InternalMove> moves = _moves(square: square);
-    return moves
-        .map<Move>(
-            (InternalMove move) => _makePretty(move, generateSan: generateSan))
-        .toList();
+  List<Move> moves({Square? square, PieceSymbol? piece}) {
+    final List<InternalMove> moves = _moves(square: square, piece: piece);
+    return moves.map<Move>((InternalMove move) => _makePretty(move)).toList();
   }
 
   List<InternalMove> _moves(
@@ -1374,7 +1425,7 @@ class Chess {
 
     /* return all pseudo-legal moves (this includes moves that allow the king
      * to be captured) */
-    if (!legal) {
+    if (!legal || _kings[us] == -1) {
       return moves;
     }
 
@@ -1396,7 +1447,7 @@ class Chess {
       {Square? from,
       Square? to,
       PieceSymbol? promotion,
-      bool sloppy = false,
+      bool strict = false,
       String? san}) {
     /* The move function can be called with in the following parameters:
         *
@@ -1415,7 +1466,7 @@ class Chess {
     InternalMove? moveObj;
 
     if (san != null) {
-      moveObj = _moveFromSan(move: san, sloppy: sloppy);
+      moveObj = _moveFromSan(move: san, strict: strict);
     } else if (from != null && to != null) {
       final List<InternalMove> moves = _moves();
 
@@ -1626,7 +1677,7 @@ class Chess {
 
     /* add the PGN header information */
     for (final String i in _header.values) {
-      /* TODO: order of enumerated properties in header object is not
+      /* upsource TODO: order of enumerated properties in header object is not
        * guaranteed, see ECMA-262 spec (section 12.6.4)
        */
       result.add('[$i "${_header[i]!}"]$newline');
@@ -2045,7 +2096,7 @@ class Chess {
 
   // convert a move from Standard Algebraic Notation (SAN) to 0x88
   // coordinates
-  InternalMove? _moveFromSan({required String move, bool sloppy = false}) {
+  InternalMove? _moveFromSan({required String move, bool strict = false}) {
     // strip off any move decorations: e.g Nf3+?! becomes Nf3
     final String cleanMove = _strippedSan(move);
 
@@ -2060,7 +2111,7 @@ class Chess {
     }
 
     // strict parser failed and the sloppy parser wasn't used, return null
-    if (!sloppy) {
+    if (strict) {
       return null;
     }
 
@@ -2086,7 +2137,7 @@ class Chess {
     // sloppy parser will default to the most most basic interpretation
     // (which is b1c3 parsing to Nc3).
 
-    // FIXME: these var's are hoisted into function scope, this will need
+    // upsource FIXME: these var's are hoisted into function scope, this will need
     // to change when switching to const/let
 
     bool overlyDisambiguated = false;
@@ -2212,7 +2263,7 @@ class Chess {
     return nodes;
   }
 
-  Move _makePretty(InternalMove uglyMove, {bool generateSan = false}) {
+  Move _makePretty(InternalMove uglyMove) {
     List<MoveTypes> prettyFlags = <MoveTypes>[];
 
     for (final MoveTypes flag in MoveTypes.values) {
@@ -2221,27 +2272,30 @@ class Chess {
       }
     }
 
-    final Move move;
-    if (generateSan) {
-      move = SanMove(
-          piece: uglyMove.piece,
-          color: uglyMove.color,
-          from: _algebraic(uglyMove.from),
-          to: _algebraic(uglyMove.to),
-          captured: uglyMove.captured,
-          promotion: uglyMove.promotion,
-          san: _moveToSan(uglyMove, _moves(legal: true)),
-          flags: prettyFlags);
-    } else {
-      move = Move(
-          piece: uglyMove.piece,
-          color: uglyMove.color,
-          from: _algebraic(uglyMove.from),
-          to: _algebraic(uglyMove.to),
-          captured: uglyMove.captured,
-          promotion: uglyMove.promotion,
-          flags: prettyFlags);
+    // generate the FEN for the 'after' key
+    _makeMove(uglyMove);
+    String after = fen();
+    _undoMove();
+
+    String promotion = '';
+    if (uglyMove.promotion != null) {
+      promotion = uglyMove.promotion!.letter;
     }
+
+    final Move move = Move(
+        piece: uglyMove.piece,
+        color: uglyMove.color,
+        from: _algebraic(uglyMove.from),
+        to: _algebraic(uglyMove.to),
+        san: _moveToSan(uglyMove, _moves(legal: true)),
+        captured: uglyMove.captured,
+        promotion: uglyMove.promotion,
+        flags: prettyFlags,
+        lan: (_algebraic(uglyMove.from).name +
+            _algebraic(uglyMove.to).name +
+            promotion),
+        before: fen(),
+        after: after);
 
     return move;
   }
@@ -2281,7 +2335,7 @@ class Chess {
     return null;
   }
 
-  List<Move> history({bool generateSan = false}) {
+  List<Move> history() {
     final List<InternalMove> reversedHistory = <InternalMove>[];
     final List<Move> moveHistory = <Move>[];
 
@@ -2295,7 +2349,7 @@ class Chess {
       }
       final InternalMove move = reversedHistory.removeLast();
 
-      moveHistory.add(_makePretty(move, generateSan: generateSan));
+      moveHistory.add(_makePretty(move));
       _makeMove(move);
     }
 
@@ -2417,33 +2471,45 @@ class Move {
   final Color color;
   final Square from;
   final Square to;
+  final String san;
   final PieceSymbol piece;
   final PieceSymbol? captured;
   final PieceSymbol? promotion;
   final List<MoveTypes> flags;
+  final String? lan;
+  final String before;
+  final String after;
 
   const Move(
       {required this.color,
       required this.from,
       required this.to,
+      required this.san,
       required this.piece,
       this.captured,
       this.promotion,
-      required this.flags});
+      required this.flags,
+      required this.lan,
+      required this.before,
+      required this.after});
 
   @override
   String toString() =>
-      '$color $piece from $from to $to ${captured != null ? 'capturing $captured' : ''} ${promotion != null ? 'promoting to $promotion' : ''}';
+      'color: $color, from: $from, to: $to, san: $san, piece: $piece, captured: $captured, promotion: $promotion, flags: $flags. lan: $lan, before: $before, after: $after ';
 
   @override
   int get hashCode =>
       color.hashCode ^
       from.hashCode ^
       to.hashCode ^
+      san.hashCode ^
       piece.hashCode ^
       captured.hashCode ^
       promotion.hashCode ^
-      flags.hashCode;
+      flags.hashCode ^
+      lan.hashCode ^
+      before.hashCode ^
+      after.hashCode;
 
   @override
   bool operator ==(Object other) {
@@ -2463,57 +2529,10 @@ class Move {
           to == other.to &&
           piece == other.piece &&
           captured == other.captured &&
-          promotion == other.promotion;
-    } else {
-      return false;
-    }
-  }
-}
-
-class SanMove extends Move {
-  final String san;
-
-  const SanMove(
-      {required super.color,
-      required super.from,
-      required super.to,
-      required super.piece,
-      super.captured,
-      super.promotion,
-      required super.flags,
-      required this.san});
-
-  @override
-  int get hashCode =>
-      color.hashCode ^
-      from.hashCode ^
-      to.hashCode ^
-      piece.hashCode ^
-      captured.hashCode ^
-      promotion.hashCode ^
-      flags.hashCode ^
-      san.hashCode;
-
-  @override
-  bool operator ==(Object other) {
-    if (other is SanMove) {
-      final String otherFlags = other.flags.fold<String>(
-          '',
-          (String previousValue, MoveTypes element) =>
-              previousValue += element.flag);
-      final String thisFlags = flags.fold<String>(
-          '',
-          (String previousValue, MoveTypes element) =>
-              previousValue += element.flag);
-
-      return otherFlags == thisFlags &&
-          color == other.color &&
-          from == other.from &&
-          to == other.to &&
-          piece == other.piece &&
-          captured == other.captured &&
           promotion == other.promotion &&
-          san == other.san;
+          lan == other.lan &&
+          before == other.before &&
+          after == other.after;
     } else {
       return false;
     }
